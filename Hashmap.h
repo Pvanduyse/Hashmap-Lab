@@ -9,7 +9,7 @@
 #include <iostream>
 #include <queue>
 #include "HashmapInterface.h"
-#define BUCKETS 10
+#define BUCKETS 100
 
 using namespace std;
 
@@ -24,8 +24,8 @@ private:
 	{
 		string key;
 		int value;
-		Node* prev;
-		Node* next;
+		Node* prev = nullptr;
+		Node* next = nullptr;
 	};
 
 	/*
@@ -56,7 +56,7 @@ private:
 	/*
 	 * Number of nodes (key/value pairs) in map
 	 */
-	int mapSize;
+	int mapSize = 0;
 
 	/*
 	 * Return a hash code (bucket index) for a given key
@@ -69,6 +69,7 @@ public:
 	Hashmap();
 	~Hashmap();
 	void insert(string key, int value);
+	Node* newNode(string key, int value);
 	bool contains(string key) const;
 	int get(string key) const;
 	int& operator [](string key);
