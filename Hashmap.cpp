@@ -1,13 +1,15 @@
 #include "Hashmap.h"
 unsigned int Hashmap::hash(string key) const
 {
-	unsigned int int_key = 0;
+	unsigned int int_key = (2*BUCKETS)/3;
 	for(char c : key)
 	{
-		int_key *= 10;
+		int_key *= 2;
 		int_key += int(c);
+		while(int_key >= BUCKETS)
+			int_key = int_key % BUCKETS + ((int_key - int_key % BUCKETS)/BUCKETS);
 	}
-	return int_key % BUCKETS;
+	return int_key;
 }
 
 Hashmap::Hashmap()
@@ -41,6 +43,7 @@ void Hashmap::insert(string key, int value)
 			this_node->value = value;
 			return;
 		}
+
 		if(this_node->next == nullptr)
 		{
 			this_node->next = newNode(key, value);
@@ -98,6 +101,7 @@ int& Hashmap::operator [](string key)
 	{
 		if(this_node->key == key)
 			return this_node->value;
+
 		if(this_node->next == nullptr)
 		{
 			this_node->next = newNode(key, 0);
@@ -117,11 +121,13 @@ bool Hashmap::remove(string key)
 			((this_node->prev == nullptr) ? buckets[hashed_index] : this_node->prev->next) = this_node->next;
 			if(this_node->next != nullptr)
 				this_node->next->prev = this_node->prev;
+
 			mapSize--;
 			delete this_node;
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -161,5 +167,19 @@ int Hashmap::size() const
 
 string Hashmap::toSortedString() const
 {
-	return "NaN";
+	stringstream output;
+
+	priority_queue<Node*, vector<Node*>, NodeCompare> nodeHeap;
+	for(int i = 0; i < BUCKETS; i++)
+		for(Node* this_node = buckets[i]; this_node != nullptr; this_node = this_node->next)
+			nodeHeap.push(this_node);
+
+	while(!nodeHeap.empty())
+	{
+		Node* this_node = nodeHeap.top();
+		output << this_node->key << " => " << this_node->value << endl;
+		nodeHeap.pop();
+	}
+
+	return output.str();
 }

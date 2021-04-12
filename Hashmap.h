@@ -9,7 +9,7 @@
 #include <iostream>
 #include <queue>
 #include "HashmapInterface.h"
-#define BUCKETS 100
+#define BUCKETS 500 // Hash will be less effective the smaller this is past 128
 
 using namespace std;
 
